@@ -1,0 +1,2301 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/DATA_0.js"></script>
+        <script src="data/BOOTH_1.js"></script>
+        <script src="data/GUDABANDA_village_2.js"></script>
+        <script src="data/GUDABANDA_PANCHAYAT_3.js"></script>
+        <script src="data/GUDABANDA_BLOCK_4.js"></script>
+        <script src="data/CHAKULIYA_village_5.js"></script>
+        <script src="data/CHAKULIYA_PANCHAYAT_6.js"></script>
+        <script src="data/CHAKULIYA_BLOCK_7.js"></script>
+        <script src="data/BEHRAGODA_village_8.js"></script>
+        <script src="data/BEHRAGODA_PANCHAYAT_9.js"></script>
+        <script src="data/BEHRAGODA_BLOCK_10.js"></script>
+        <script src="data/Assembly_Constituency_11.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[22.19505987880943,86.37624023184516],[22.63750933421247,87.05878156512301]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_DATA_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Block'] !== null ? autolinker.link(feature.properties['Block'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DATA_0_0() {
+            return {
+                pane: 'pane_DATA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,82,45,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DATA_0');
+        map.getPane('pane_DATA_0').style.zIndex = 400;
+        map.getPane('pane_DATA_0').style['mix-blend-mode'] = 'normal';
+        var layer_DATA_0 = new L.geoJson(json_DATA_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DATA_0',
+            layerName: 'layer_DATA_0',
+            pane: 'pane_DATA_0',
+            onEachFeature: pop_DATA_0,
+            style: style_DATA_0_0,
+        });
+        bounds_group.addLayer(layer_DATA_0);
+        map.addLayer(layer_DATA_0);
+        function pop_BOOTH_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['booth'] !== null ? autolinker.link(feature.properties['booth'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['booth_name'] !== null ? autolinker.link(feature.properties['booth_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BOOTH_1_0() {
+            return {
+                pane: 'pane_BOOTH_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,113,88,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BOOTH_1');
+        map.getPane('pane_BOOTH_1').style.zIndex = 401;
+        map.getPane('pane_BOOTH_1').style['mix-blend-mode'] = 'normal';
+        var layer_BOOTH_1 = new L.geoJson(json_BOOTH_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BOOTH_1',
+            layerName: 'layer_BOOTH_1',
+            pane: 'pane_BOOTH_1',
+            onEachFeature: pop_BOOTH_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_BOOTH_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BOOTH_1);
+        map.addLayer(layer_BOOTH_1);
+        function pop_GUDABANDA_village_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['No_HH'] !== null ? autolinker.link(feature.properties['No_HH'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_P'] !== null ? autolinker.link(feature.properties['TOT_P'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_M'] !== null ? autolinker.link(feature.properties['TOT_M'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_F'] !== null ? autolinker.link(feature.properties['TOT_F'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_GUDABANDA_village_2_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Angarpara':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(112,25,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Balijuri':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,64,26,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Banmakri':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(137,222,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'FOREST bLOCK':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,85,162,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Murakati':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,223,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'sINGHPURA':
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,166,232,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_GUDABANDA_village_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(58,230,190,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_GUDABANDA_village_2');
+        map.getPane('pane_GUDABANDA_village_2').style.zIndex = 402;
+        map.getPane('pane_GUDABANDA_village_2').style['mix-blend-mode'] = 'normal';
+        var layer_GUDABANDA_village_2 = new L.geoJson(json_GUDABANDA_village_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_GUDABANDA_village_2',
+            layerName: 'layer_GUDABANDA_village_2',
+            pane: 'pane_GUDABANDA_village_2',
+            onEachFeature: pop_GUDABANDA_village_2,
+            style: style_GUDABANDA_village_2_0,
+        });
+        bounds_group.addLayer(layer_GUDABANDA_village_2);
+        map.addLayer(layer_GUDABANDA_village_2);
+        function pop_GUDABANDA_PANCHAYAT_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Block'] !== null ? autolinker.link(feature.properties['Block'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_GUDABANDA_PANCHAYAT_3_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Angarpara':
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,230,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Balijuri':
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,187,48,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Banmakri':
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(218,67,82,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Murakati':
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(189,33,206,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'sINGHPURA':
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,81,202,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_GUDABANDA_PANCHAYAT_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(42,208,20,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_GUDABANDA_PANCHAYAT_3');
+        map.getPane('pane_GUDABANDA_PANCHAYAT_3').style.zIndex = 403;
+        map.getPane('pane_GUDABANDA_PANCHAYAT_3').style['mix-blend-mode'] = 'normal';
+        var layer_GUDABANDA_PANCHAYAT_3 = new L.geoJson(json_GUDABANDA_PANCHAYAT_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_GUDABANDA_PANCHAYAT_3',
+            layerName: 'layer_GUDABANDA_PANCHAYAT_3',
+            pane: 'pane_GUDABANDA_PANCHAYAT_3',
+            onEachFeature: pop_GUDABANDA_PANCHAYAT_3,
+            style: style_GUDABANDA_PANCHAYAT_3_0,
+        });
+        bounds_group.addLayer(layer_GUDABANDA_PANCHAYAT_3);
+        map.addLayer(layer_GUDABANDA_PANCHAYAT_3);
+        function pop_GUDABANDA_BLOCK_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_GUDABANDA_BLOCK_4_0() {
+            return {
+                pane: 'pane_GUDABANDA_BLOCK_4',
+                opacity: 1,
+                color: 'rgba(0,2,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 10.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(37,232,11,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_GUDABANDA_BLOCK_4');
+        map.getPane('pane_GUDABANDA_BLOCK_4').style.zIndex = 404;
+        map.getPane('pane_GUDABANDA_BLOCK_4').style['mix-blend-mode'] = 'normal';
+        var layer_GUDABANDA_BLOCK_4 = new L.geoJson(json_GUDABANDA_BLOCK_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_GUDABANDA_BLOCK_4',
+            layerName: 'layer_GUDABANDA_BLOCK_4',
+            pane: 'pane_GUDABANDA_BLOCK_4',
+            onEachFeature: pop_GUDABANDA_BLOCK_4,
+            style: style_GUDABANDA_BLOCK_4_0,
+        });
+        bounds_group.addLayer(layer_GUDABANDA_BLOCK_4);
+        map.addLayer(layer_GUDABANDA_BLOCK_4);
+        function pop_CHAKULIYA_village_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['No_HH'] !== null ? autolinker.link(feature.properties['No_HH'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_P'] !== null ? autolinker.link(feature.properties['TOT_P'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_M'] !== null ? autolinker.link(feature.properties['TOT_M'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_F'] !== null ? autolinker.link(feature.properties['TOT_F'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CHAKULIYA_village_5_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Badamara_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,74,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bend_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,67,112,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bhatakunda_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(35,224,190,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Birdoha_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(239,53,59,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chakulia (NA)':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(160,76,229,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chaluuniya_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(206,35,138,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chandanpur_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,220,58,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Jamua_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(38,230,86,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Jugitopa_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(151,119,236,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kalapathar_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,80,221,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kaliyam_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(16,20,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kuchiyasholi_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(206,159,104,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Lodhasholi_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(216,140,231,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Malkundi_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,106,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matiawandhi_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(123,239,69,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Saradiha_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,207,63,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Shyamsundarpur_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(67,215,234,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Simdi_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,233,25,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sonahatu':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(86,236,166,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sonahatu_1':
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(141,212,33,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_CHAKULIYA_village_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(81,177,240,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CHAKULIYA_village_5');
+        map.getPane('pane_CHAKULIYA_village_5').style.zIndex = 405;
+        map.getPane('pane_CHAKULIYA_village_5').style['mix-blend-mode'] = 'normal';
+        var layer_CHAKULIYA_village_5 = new L.geoJson(json_CHAKULIYA_village_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CHAKULIYA_village_5',
+            layerName: 'layer_CHAKULIYA_village_5',
+            pane: 'pane_CHAKULIYA_village_5',
+            onEachFeature: pop_CHAKULIYA_village_5,
+            style: style_CHAKULIYA_village_5_0,
+        });
+        bounds_group.addLayer(layer_CHAKULIYA_village_5);
+        map.addLayer(layer_CHAKULIYA_village_5);
+        function pop_CHAKULIYA_PANCHAYAT_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Block'] !== null ? autolinker.link(feature.properties['Block'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CHAKULIYA_PANCHAYAT_6_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Badamara':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,195,221,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bend':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(137,203,13,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bhatakunda':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,222,159,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Birdoha':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(112,217,200,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chakuliya_MNC':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,228,120,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chaluuniya':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,89,228,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chandanpur':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,153,87,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Jamua':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(220,191,103,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Jugitopa':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(177,116,209,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kalapathar':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(94,34,207,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kaliyam':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,14,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kuchiyasholi':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(107,161,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Lodhasholi':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,81,54,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Malkundi':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(85,240,121,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matiawandhi':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(138,214,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Saradiha':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(206,45,69,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Shyamsundarpur':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(115,146,237,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Simdi':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(124,219,118,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sonahatu':
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,64,205,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(203,99,146,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CHAKULIYA_PANCHAYAT_6');
+        map.getPane('pane_CHAKULIYA_PANCHAYAT_6').style.zIndex = 406;
+        map.getPane('pane_CHAKULIYA_PANCHAYAT_6').style['mix-blend-mode'] = 'normal';
+        var layer_CHAKULIYA_PANCHAYAT_6 = new L.geoJson(json_CHAKULIYA_PANCHAYAT_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CHAKULIYA_PANCHAYAT_6',
+            layerName: 'layer_CHAKULIYA_PANCHAYAT_6',
+            pane: 'pane_CHAKULIYA_PANCHAYAT_6',
+            onEachFeature: pop_CHAKULIYA_PANCHAYAT_6,
+            style: style_CHAKULIYA_PANCHAYAT_6_0,
+        });
+        bounds_group.addLayer(layer_CHAKULIYA_PANCHAYAT_6);
+        map.addLayer(layer_CHAKULIYA_PANCHAYAT_6);
+        function pop_CHAKULIYA_BLOCK_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CHAKULIYA_BLOCK_7_0() {
+            return {
+                pane: 'pane_CHAKULIYA_BLOCK_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 11.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,44,246,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_CHAKULIYA_BLOCK_7');
+        map.getPane('pane_CHAKULIYA_BLOCK_7').style.zIndex = 407;
+        map.getPane('pane_CHAKULIYA_BLOCK_7').style['mix-blend-mode'] = 'normal';
+        var layer_CHAKULIYA_BLOCK_7 = new L.geoJson(json_CHAKULIYA_BLOCK_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CHAKULIYA_BLOCK_7',
+            layerName: 'layer_CHAKULIYA_BLOCK_7',
+            pane: 'pane_CHAKULIYA_BLOCK_7',
+            onEachFeature: pop_CHAKULIYA_BLOCK_7,
+            style: style_CHAKULIYA_BLOCK_7_0,
+        });
+        bounds_group.addLayer(layer_CHAKULIYA_BLOCK_7);
+        map.addLayer(layer_CHAKULIYA_BLOCK_7);
+        function pop_BEHRAGODA_village_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['No_HH'] !== null ? autolinker.link(feature.properties['No_HH'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_P'] !== null ? autolinker.link(feature.properties['TOT_P'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_M'] !== null ? autolinker.link(feature.properties['TOT_M'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOT_F'] !== null ? autolinker.link(feature.properties['TOT_F'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BEHRAGODA_village_8_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Bahaliya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,33,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bankata':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(114,207,20,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Baragerya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(233,239,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bhutiya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,201,49,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Brahmankundi':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,129,116,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chhota Paruliya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(94,173,201,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chingra':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,160,93,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Damjuri':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(198,231,107,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gamariya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,120,212,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gopalpur':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,59,177,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Guhiyapal':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,223,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kesharda':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(110,210,125,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kharamauda':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,201,98,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kherua':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,67,148,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kumardubi':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,103,197,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mahushmuriya':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,103,197,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matihana':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,42,238,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mauda':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,96,25,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'muturkham':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(233,76,89,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pathra':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(42,238,117,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pathri':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(126,68,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Patpur':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(66,202,177,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Purna Pani':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,123,214,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Randhlabandh':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,134,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sakra':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,99,236,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sanrra':
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,220,229,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_BEHRAGODA_village_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,114,222,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_BEHRAGODA_village_8');
+        map.getPane('pane_BEHRAGODA_village_8').style.zIndex = 408;
+        map.getPane('pane_BEHRAGODA_village_8').style['mix-blend-mode'] = 'normal';
+        var layer_BEHRAGODA_village_8 = new L.geoJson(json_BEHRAGODA_village_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BEHRAGODA_village_8',
+            layerName: 'layer_BEHRAGODA_village_8',
+            pane: 'pane_BEHRAGODA_village_8',
+            onEachFeature: pop_BEHRAGODA_village_8,
+            style: style_BEHRAGODA_village_8_0,
+        });
+        bounds_group.addLayer(layer_BEHRAGODA_village_8);
+        map.addLayer(layer_BEHRAGODA_village_8);
+        function pop_BEHRAGODA_PANCHAYAT_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">PANCHAYAT</th>\
+                        <td>' + (feature.properties['PANCHAYAT'] !== null ? autolinker.link(feature.properties['PANCHAYAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Block'] !== null ? autolinker.link(feature.properties['Block'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BEHRAGODA_PANCHAYAT_9_0(feature) {
+            switch(String(feature.properties['PANCHAYAT'])) {
+                case 'Bahaliya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(79,77,207,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bankata':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,222,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Baragerya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,122,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bhutiya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(148,233,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Brahmankundi':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,135,229,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chhota Paruliya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(50,211,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Chingra':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,104,64,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Damjuri':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,28,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gamariya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(230,115,15,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gopalpur':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,93,180,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Guhiyapal':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,72,107,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kesharda':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,69,222,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kharamauda':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,121,215,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kherua':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(12,203,143,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kumardubi':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(214,203,101,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mahushmuriya':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(214,203,101,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matihana':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(233,133,133,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mauda':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,70,209,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'muturkham':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(177,240,59,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pathra':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(127,150,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pathri':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(42,212,45,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Patpur':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(217,176,88,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Purna Pani':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(201,215,110,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Randhlabandh':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(30,201,70,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sakra':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(61,190,207,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sanrra':
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,99,147,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(153,218,103,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_BEHRAGODA_PANCHAYAT_9');
+        map.getPane('pane_BEHRAGODA_PANCHAYAT_9').style.zIndex = 409;
+        map.getPane('pane_BEHRAGODA_PANCHAYAT_9').style['mix-blend-mode'] = 'normal';
+        var layer_BEHRAGODA_PANCHAYAT_9 = new L.geoJson(json_BEHRAGODA_PANCHAYAT_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BEHRAGODA_PANCHAYAT_9',
+            layerName: 'layer_BEHRAGODA_PANCHAYAT_9',
+            pane: 'pane_BEHRAGODA_PANCHAYAT_9',
+            onEachFeature: pop_BEHRAGODA_PANCHAYAT_9,
+            style: style_BEHRAGODA_PANCHAYAT_9_0,
+        });
+        bounds_group.addLayer(layer_BEHRAGODA_PANCHAYAT_9);
+        map.addLayer(layer_BEHRAGODA_PANCHAYAT_9);
+        function pop_BEHRAGODA_BLOCK_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BEHRAGODA_BLOCK_10_0() {
+            return {
+                pane: 'pane_BEHRAGODA_BLOCK_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 11.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,166,178,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BEHRAGODA_BLOCK_10');
+        map.getPane('pane_BEHRAGODA_BLOCK_10').style.zIndex = 410;
+        map.getPane('pane_BEHRAGODA_BLOCK_10').style['mix-blend-mode'] = 'normal';
+        var layer_BEHRAGODA_BLOCK_10 = new L.geoJson(json_BEHRAGODA_BLOCK_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BEHRAGODA_BLOCK_10',
+            layerName: 'layer_BEHRAGODA_BLOCK_10',
+            pane: 'pane_BEHRAGODA_BLOCK_10',
+            onEachFeature: pop_BEHRAGODA_BLOCK_10,
+            style: style_BEHRAGODA_BLOCK_10_0,
+        });
+        bounds_group.addLayer(layer_BEHRAGODA_BLOCK_10);
+        map.addLayer(layer_BEHRAGODA_BLOCK_10);
+        function pop_Assembly_Constituency_11(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Assembly_Constituency_11_0() {
+            return {
+                pane: 'pane_Assembly_Constituency_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,237,45,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Assembly_Constituency_11');
+        map.getPane('pane_Assembly_Constituency_11').style.zIndex = 411;
+        map.getPane('pane_Assembly_Constituency_11').style['mix-blend-mode'] = 'normal';
+        var layer_Assembly_Constituency_11 = new L.geoJson(json_Assembly_Constituency_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Assembly_Constituency_11',
+            layerName: 'layer_Assembly_Constituency_11',
+            pane: 'pane_Assembly_Constituency_11',
+            onEachFeature: pop_Assembly_Constituency_11,
+            style: style_Assembly_Constituency_11_0,
+        });
+        bounds_group.addLayer(layer_Assembly_Constituency_11);
+        map.addLayer(layer_Assembly_Constituency_11);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: '<img src="legend/Assembly_Constituency_11.png" /> Assembly_Constituency', layer: layer_Assembly_Constituency_11},
+            {label: '<img src="legend/BEHRAGODA_BLOCK_10.png" /> BEHRAGODA_BLOCK', layer: layer_BEHRAGODA_BLOCK_10},
+            {label: 'BEHRAGODA_PANCHAYAT<br /><table><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Bahaliya0.png" /></td><td>Bahaliya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Bankata1.png" /></td><td>Bankata</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Baragerya2.png" /></td><td>Baragerya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Bhutiya3.png" /></td><td>Bhutiya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Brahmankundi4.png" /></td><td>Brahmankundi</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_ChhotaParuliya5.png" /></td><td>Chhota Paruliya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Chingra6.png" /></td><td>Chingra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Damjuri7.png" /></td><td>Damjuri</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Gamariya8.png" /></td><td>Gamariya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Gopalpur9.png" /></td><td>Gopalpur</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Guhiyapal10.png" /></td><td>Guhiyapal</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Kesharda11.png" /></td><td>Kesharda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Kharamauda12.png" /></td><td>Kharamauda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Kherua13.png" /></td><td>Kherua</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Kumardubi14.png" /></td><td>Kumardubi</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Mahushmuriya15.png" /></td><td>Mahushmuriya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Matihana16.png" /></td><td>Matihana</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Mauda17.png" /></td><td>Mauda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_muturkham18.png" /></td><td>muturkham</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Pathra19.png" /></td><td>Pathra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Pathri20.png" /></td><td>Pathri</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Patpur21.png" /></td><td>Patpur</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_PurnaPani22.png" /></td><td>Purna Pani</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Randhlabandh23.png" /></td><td>Randhlabandh</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Sakra24.png" /></td><td>Sakra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_Sanrra25.png" /></td><td>Sanrra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_PANCHAYAT_9_26.png" /></td><td></td></tr></table>', layer: layer_BEHRAGODA_PANCHAYAT_9},
+            {label: 'BEHRAGODA_village<br /><table><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Bahaliya0.png" /></td><td>Bahaliya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Bankata1.png" /></td><td>Bankata</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Baragerya2.png" /></td><td>Baragerya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Bhutiya3.png" /></td><td>Bhutiya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Brahmankundi4.png" /></td><td>Brahmankundi</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_ChhotaParuliya5.png" /></td><td>Chhota Paruliya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Chingra6.png" /></td><td>Chingra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Damjuri7.png" /></td><td>Damjuri</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Gamariya8.png" /></td><td>Gamariya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Gopalpur9.png" /></td><td>Gopalpur</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Guhiyapal10.png" /></td><td>Guhiyapal</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Kesharda11.png" /></td><td>Kesharda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Kharamauda12.png" /></td><td>Kharamauda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Kherua13.png" /></td><td>Kherua</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Kumardubi14.png" /></td><td>Kumardubi</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Mahushmuriya15.png" /></td><td>Mahushmuriya</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Matihana16.png" /></td><td>Matihana</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Mauda17.png" /></td><td>Mauda</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_muturkham18.png" /></td><td>muturkham</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Pathra19.png" /></td><td>Pathra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Pathri20.png" /></td><td>Pathri</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Patpur21.png" /></td><td>Patpur</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_PurnaPani22.png" /></td><td>Purna Pani</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Randhlabandh23.png" /></td><td>Randhlabandh</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Sakra24.png" /></td><td>Sakra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_Sanrra25.png" /></td><td>Sanrra</td></tr><tr><td style="text-align: center;"><img src="legend/BEHRAGODA_village_8_26.png" /></td><td></td></tr></table>', layer: layer_BEHRAGODA_village_8},
+            {label: '<img src="legend/CHAKULIYA_BLOCK_7.png" /> CHAKULIYA_BLOCK', layer: layer_CHAKULIYA_BLOCK_7},
+            {label: 'CHAKULIYA_PANCHAYAT<br /><table><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Badamara0.png" /></td><td>Badamara</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Bend1.png" /></td><td>Bend</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Bhatakunda2.png" /></td><td>Bhatakunda</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Birdoha3.png" /></td><td>Birdoha</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_ChakuliyaMNC4.png" /></td><td>Chakuliya_MNC</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Chaluuniya5.png" /></td><td>Chaluuniya</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Chandanpur6.png" /></td><td>Chandanpur</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Jamua7.png" /></td><td>Jamua</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Jugitopa8.png" /></td><td>Jugitopa</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Kalapathar9.png" /></td><td>Kalapathar</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Kaliyam10.png" /></td><td>Kaliyam</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Kuchiyasholi11.png" /></td><td>Kuchiyasholi</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Lodhasholi12.png" /></td><td>Lodhasholi</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Malkundi13.png" /></td><td>Malkundi</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Matiawandhi14.png" /></td><td>Matiawandhi</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Saradiha15.png" /></td><td>Saradiha</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Shyamsundarpur16.png" /></td><td>Shyamsundarpur</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Simdi17.png" /></td><td>Simdi</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_Sonahatu18.png" /></td><td>Sonahatu</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_PANCHAYAT_6_19.png" /></td><td></td></tr></table>', layer: layer_CHAKULIYA_PANCHAYAT_6},
+            {label: 'CHAKULIYA_village<br /><table><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Badamara10.png" /></td><td>Badamara_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Bend11.png" /></td><td>Bend_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Bhatakunda12.png" /></td><td>Bhatakunda_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Birdoha13.png" /></td><td>Birdoha_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_ChakuliaNA4.png" /></td><td>Chakulia (NA)</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Chaluuniya15.png" /></td><td>Chaluuniya_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Chandanpur16.png" /></td><td>Chandanpur_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Jamua17.png" /></td><td>Jamua_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Jugitopa18.png" /></td><td>Jugitopa_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Kalapathar19.png" /></td><td>Kalapathar_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Kaliyam110.png" /></td><td>Kaliyam_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Kuchiyasholi111.png" /></td><td>Kuchiyasholi_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Lodhasholi112.png" /></td><td>Lodhasholi_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Malkundi113.png" /></td><td>Malkundi_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Matiawandhi114.png" /></td><td>Matiawandhi_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Saradiha115.png" /></td><td>Saradiha_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Shyamsundarpur116.png" /></td><td>Shyamsundarpur_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Simdi117.png" /></td><td>Simdi_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Sonahatu18.png" /></td><td>Sonahatu</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_Sonahatu119.png" /></td><td>Sonahatu_1</td></tr><tr><td style="text-align: center;"><img src="legend/CHAKULIYA_village_5_20.png" /></td><td></td></tr></table>', layer: layer_CHAKULIYA_village_5},
+            {label: '<img src="legend/GUDABANDA_BLOCK_4.png" /> GUDABANDA_BLOCK', layer: layer_GUDABANDA_BLOCK_4},
+            {label: 'GUDABANDA_PANCHAYAT<br /><table><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_Angarpara0.png" /></td><td>Angarpara</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_Balijuri1.png" /></td><td>Balijuri</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_Banmakri2.png" /></td><td>Banmakri</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_Murakati3.png" /></td><td>Murakati</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_sINGHPURA4.png" /></td><td>sINGHPURA</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_PANCHAYAT_3_5.png" /></td><td></td></tr></table>', layer: layer_GUDABANDA_PANCHAYAT_3},
+            {label: 'GUDABANDA_village<br /><table><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_Angarpara0.png" /></td><td>Angarpara</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_Balijuri1.png" /></td><td>Balijuri</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_Banmakri2.png" /></td><td>Banmakri</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_FORESTbLOCK3.png" /></td><td>FOREST bLOCK</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_Murakati4.png" /></td><td>Murakati</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_sINGHPURA5.png" /></td><td>sINGHPURA</td></tr><tr><td style="text-align: center;"><img src="legend/GUDABANDA_village_2_6.png" /></td><td></td></tr></table>', layer: layer_GUDABANDA_village_2},
+            {label: '<img src="legend/BOOTH_1.png" /> BOOTH', layer: layer_BOOTH_1},
+            {label: '<img src="legend/DATA_0.png" /> DATA', layer: layer_DATA_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        setBounds();
+        var i = 0;
+        layer_Assembly_Constituency_11.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME'] !== null?String('<div style="color: #000000; font-size: 50pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['NAME']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Assembly_Constituency_11'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        map.addControl(new L.Control.Search({
+            layer: layer_DATA_0,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'PANCHAYAT'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        resetLabels([layer_BOOTH_1,layer_GUDABANDA_village_2,layer_GUDABANDA_PANCHAYAT_3,layer_GUDABANDA_BLOCK_4,layer_CHAKULIYA_village_5,layer_CHAKULIYA_PANCHAYAT_6,layer_CHAKULIYA_BLOCK_7,layer_BEHRAGODA_village_8,layer_BEHRAGODA_PANCHAYAT_9,layer_BEHRAGODA_BLOCK_10,layer_Assembly_Constituency_11]);
+        map.on("zoomend", function(){
+            resetLabels([layer_BOOTH_1,layer_GUDABANDA_village_2,layer_GUDABANDA_PANCHAYAT_3,layer_GUDABANDA_BLOCK_4,layer_CHAKULIYA_village_5,layer_CHAKULIYA_PANCHAYAT_6,layer_CHAKULIYA_BLOCK_7,layer_BEHRAGODA_village_8,layer_BEHRAGODA_PANCHAYAT_9,layer_BEHRAGODA_BLOCK_10,layer_Assembly_Constituency_11]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_BOOTH_1,layer_GUDABANDA_village_2,layer_GUDABANDA_PANCHAYAT_3,layer_GUDABANDA_BLOCK_4,layer_CHAKULIYA_village_5,layer_CHAKULIYA_PANCHAYAT_6,layer_CHAKULIYA_BLOCK_7,layer_BEHRAGODA_village_8,layer_BEHRAGODA_PANCHAYAT_9,layer_BEHRAGODA_BLOCK_10,layer_Assembly_Constituency_11]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_BOOTH_1,layer_GUDABANDA_village_2,layer_GUDABANDA_PANCHAYAT_3,layer_GUDABANDA_BLOCK_4,layer_CHAKULIYA_village_5,layer_CHAKULIYA_PANCHAYAT_6,layer_CHAKULIYA_BLOCK_7,layer_BEHRAGODA_village_8,layer_BEHRAGODA_PANCHAYAT_9,layer_BEHRAGODA_BLOCK_10,layer_Assembly_Constituency_11]);
+        });
+        </script>
+    </body>
+</html>
